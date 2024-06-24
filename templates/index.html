@@ -1,0 +1,33 @@
+<html>
+<head>
+    <title>Plugins</title>
+    <link href="{{ url_for('static', path='bootstrap.min.css') }}"  rel="stylesheet">
+</head>
+<body>
+    <main>
+      <div>
+        <div class="container">
+        <h1 class="mb-5 mt-4">Plugin Directory</h1>
+        <div class="col-6 mb-5">
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Search</label>
+            <input type="search"
+                   name="search"
+                   class="form-control"
+                   id="exampleFormControlInput1"
+                   placeholder="type a search query"
+                   hx-post="/search"
+                   hx-trigger="input changed delay:500ms, search"
+                   hx-target="#search-results">
+          </div>
+        </div>
+        <div id="search-results">
+          {% include 'plugins.html' %}
+        </div>
+      </div>
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.0" integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw" crossorigin="anonymous"></script>
+</body>
+</html>

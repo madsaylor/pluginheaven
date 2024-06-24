@@ -1,0 +1,18 @@
+ <div class="row mb-5">
+    {% for plugin in plugins %}
+      <div class="col-sm-6 mt-3 mb-3 mb-sm-0">
+        <div class="card mh-100">
+          <div class="card-body row">
+            <div class="col-2">
+              <img src="{{ plugin.image }}" width="48" class="rounded mx-3 float-start" alt="..."/>
+            </div>
+            <div class="col-10">
+              <h5 class="card-title">{{plugin.title}}</h5>
+              <p class="card-text">{{plugin.description | truncate(300, end='...')}}</p>
+              <a href="#" class="btn btn-primary w-25 text-center">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+   {% endfor %}
+</div>
