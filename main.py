@@ -1,22 +1,28 @@
 from typing import Union
 from fastapi import FastAPI
-from sqlmodel import SQLModel, Field, create_engine
+from sqlmodel import SQLModel, Session, create_engine, funcfilter
+import json
 
-app = FastAPI()
+from models import Plugin
+
+db_url = 'postgresql://postgres:mysecretpassword@localhost/postgres'
+engine = create_engine(db_url, echo=True)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    load_data()
+    yield
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+def get_or_create(session, model, **kwargs):
+    instance = session.query(model).filter_by(**kwargs).first()
+    if instance:
+        return instance
+    else:
+        instance = model(**kwargs)
+        session.add(instance)
+        session.commit()
+        return instance
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-
-def initial():
-    database = 'postgresql://postgres:mysecretpassword@localhost/postgres'
-    engine = create_engine(database)
-    SQLModel.metadata.create_all(engine)
-
+app = FastAPI(lifespan=lifespan)
