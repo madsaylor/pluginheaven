@@ -52,7 +52,7 @@ def search_plugin(request: Request, search: str = Form(default="")):
             # search within description and title
             plugins = session.query(Plugin).filter(
                 Plugin.title.ilike(f"%{search}%") | Plugin.description.ilike(f"%{search}%")
-            ).all()
+            ).limit(50).all()
 
         return templates.TemplateResponse(
             request=request, name="plugins.html", context={"plugins": plugins}
