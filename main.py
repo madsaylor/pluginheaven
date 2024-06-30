@@ -37,22 +37,31 @@ def get_plugins_json():
 @app.get("/", response_class=HTMLResponse)
 def get_plugins(request: Request):
     with Session(engine) as session:
-        plugins = session.query(Plugin).limit(50).all()
+        plugins = session.exec(select(Plugin).limit(50))
         return templates.TemplateResponse(
             request=request, name="index.html", context={"plugins": plugins}
         )
 
 
 @app.post("/search", response_class=HTMLResponse)
-def search_plugin(request: Request, search: str = Form(default="")):
+def search_plugin(request: Request, search: str = Form(default=""), sort: str = Form(default="")):
     with Session(engine) as session:
-        if len(search) == 0:
-            plugins = session.query(Plugin).limit(50).all()
+        if len(search) == 0 and len(sort) == 0:
+            plugins = session.exec(select(Plugin).limit(50))
         else:
             # search within description and title
-            plugins = session.query(Plugin).filter(
-                Plugin.title.ilike(f"%{search}%") | Plugin.description.ilike(f"%{search}%")
-            ).limit(50).all()
+            criteria = None
+            if len(sort) > 0:
+                criteria = Plugin.count.desc() if sort.split(':')[1] == 'desc' else Plugin.count.asc()
+
+            plugins = session.exec(
+                select(Plugin)
+                .filter(
+                    Plugin.title.ilike(f"%{search}%") | Plugin.description.ilike(f"%{search}%")
+                )
+                .limit(50)
+                .order_by(criteria)
+            )
 
         return templates.TemplateResponse(
             request=request, name="plugins.html", context={"plugins": plugins}

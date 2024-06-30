@@ -14,14 +14,14 @@
       </nav>
       <div>
         <div class="container-fluid bg-body-tertiary">
-          <div class="col-md-8 p-lg-5 ms-1 my-5 mt-0">
+          <div class="col-md-8 p-lg-5 ms-1 my-5">
             <h1 class="display-3 fw-bold">Better plugin directory </h1>
             <h3 class="fw-normal text-muted mb-3">Find plugins that will elevate your website</h3>
           </div>
         </div>
-        <div class="container mt-5">
+        <div class="container mt-2">
           <form class="row">
-            <div class="col-6 mb-5">
+            <div class="col-6 mb-1">
               <div class="mb-3">
                 <input type="search"
                        name="search"
@@ -29,17 +29,18 @@
                        id="exampleFormControlInput1"
                        placeholder="Search for a plugin"
                        hx-post="/search"
-                       hx-trigger="input changed delay:500ms, search"
-                       hx-target="#search-results">
+                       hx-trigger="input changed delay:500ms, search, change from:[name='sort']"
+                       hx-target="#search-results"
+                       hx-include="[name='sort']">
               </div>
             </div>
             <div class="col-3">
               <div class="input-group mb-3">
-                <label class="input-group-text" for="inputGroupSelect01">Sort By</label>
-                <select class="form-select" id="inputGroupSelect01">
-                  <option selected>Choose...</option>
-                  <option value="1">Downloads DESC</option>
-                  <option value="2">Downloads ASC</option>
+                <label class="input-group-text" for="sort-select">Sort By</label>
+                <select name="sort" class="form-select" id="sort-select">
+                  <option selected value="">None</option>
+                  <option value="downloads:desc">Downloads DESC</option>
+                  <option value="downloads:asc">Downloads ASC</option>
                 </select>
               </div>
             </div>
@@ -47,7 +48,6 @@
           <div id="search-results">
             {% include 'plugins.html' %}
           </div>
-
         </div>
       </div>
     </main>
