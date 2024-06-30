@@ -1,1 +1,1 @@
-<img width="1140" alt="image" src="https://github.com/madsaylor/pluginheaven/assets/3727755/aeb5e1c3-bcf9-40c4-ba13-c5d2e3933080">
+<img width="1128" alt="image" src="https://github.com/madsaylor/pluginheaven/assets/3727755/4fd87143-e8e7-4027-bd3d-de1e6b4bc0dc">
