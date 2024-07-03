@@ -1,12 +1,10 @@
-from typing import Annotated
-
 from fastapi import FastAPI, Request, Form
 from sqlmodel import Session, create_engine, select
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
-from models import Plugin
+import sqlalchemy as sa
+from models import Plugin, to_tsvector
 
 db_url = 'postgresql://postgres:mysecretpassword@localhost/postgres'
 engine = create_engine(db_url, echo=True)
@@ -54,10 +52,13 @@ def search_plugin(request: Request, search: str = Form(default=""), sort: str = 
             if len(sort) > 0:
                 criteria = Plugin.count.desc() if sort.split(':')[1] == 'desc' else Plugin.count.asc()
 
+            search_tsvector = to_tsvector('title', 'description')
+            tsquery = sa.func.plainto_tsquery('english', search)
+
             plugins = session.exec(
                 select(Plugin)
                 .filter(
-                    Plugin.title.ilike(f"%{search}%") | Plugin.description.ilike(f"%{search}%")
+                    search_tsvector.op('@@')(tsquery) if len(search) > 0 else True
                 )
                 .limit(50)
                 .order_by(criteria)

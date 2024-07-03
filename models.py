@@ -1,7 +1,13 @@
-from sqlmodel import SQLModel, Field, String
+from sqlmodel import SQLModel, Field, Column, Computed
 from datetime import datetime
-from sqlalchemy.dialects.postgresql import TEXT
-from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import TEXT, TSVECTOR
+import sqlalchemy as sa
+from typing import ClassVar
+
+
+def to_tsvector(*columns):
+    s = " || ' ' || ".join(columns)
+    return sa.func.to_tsvector(sa.text("'english'"), sa.text(s))
 
 
 class Plugin(SQLModel, table=True):
@@ -13,7 +19,16 @@ class Plugin(SQLModel, table=True):
     price: int | None
     one_time_price: int | None
     image: str
-    count: int
+    count: int = Field(index=True)
+
+    __table_args__ = (
+        sa.Index(
+            "ix_index_name",
+            to_tsvector('title', 'description'),
+            postgresql_using="gin",
+        ),
+    )
+
     # tags: ARRAY['Tag'] = Field(default=[])
 
 
